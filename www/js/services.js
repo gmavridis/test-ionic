@@ -7,7 +7,7 @@ angular.module('conFusion.services',['ngResource'])
             var promotions = [
                 {
                           _id:0,
-                          name:'Weekend Grand Buffet', 
+                          name:'Weekend Grand Buffet',
                           image: 'images/buffet.png',
                           label:'New',
                           price:'19.99',
@@ -25,8 +25,8 @@ angular.module('conFusion.services',['ngResource'])
                 // implement a function named getPromotion
                 // that returns a selected promotion.
                 this.getPromotion = function() {
-                    return   $resource(baseURL+"promotions/:id");;
-                }
+                    return   $resource(baseURL+"promotions/:id");
+                };
     
                         
         }])
@@ -45,4 +45,18 @@ angular.module('conFusion.services',['ngResource'])
     
         }])
 
+        .factory('favoriteFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+            var favFac = {};
+            var favorites = [];
+
+            favFac.addToFavorites = function (index) {
+                for (var i = 0; i < favorites.length; i++) {
+                    if (favorites[i].id == index)
+                        return;
+                }
+                favorites.push({id: index});
+            };
+
+            return favFac;
+            }])
 ;
