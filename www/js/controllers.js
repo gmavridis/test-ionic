@@ -151,12 +151,56 @@ angular.module('conFusion.controllers', [])
             };
         }])
 
-        .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+        .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicModal', '$ionicPopover', function($scope, $stateParams, menuFactory, favoriteFactory, baseURL, $ionicModal, $ionicPopover) {
             $scope.baseURL = baseURL;
             $scope.dish = {};
             $scope.showDish = false;
-            $scope.message="Loading ...";
-            
+            $scope.message = "Loading ...";
+            $scope.comment = {};
+
+            $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
+                scope: $scope
+            }).then(function(popover) {
+                $scope.popover = popover;
+            });
+
+            $scope.addFavorite = function () {
+                console.log("index is " + $scope.dish.id);
+                favoriteFactory.addToFavorites( $scope.dish.id );
+                $scope.popover.hide();
+            };
+
+            $scope.addComment = function() {
+                $scope.popover.hide();
+            };
+
+            // Open the login popover
+            $scope.pressedMore = function($event) {
+                $scope.popover.show($event);
+            };
+
+            // Create the reserve modal that we will use later
+            $ionicModal.fromTemplateUrl('templates/comment.html', {
+                scope: $scope
+            }).then(function(modal) {
+                $scope.commentform = modal;
+            });
+
+            // Triggered in the reserve modal to close it
+            $scope.closeComment = function() {
+                $scope.commentform.hide();
+            };
+
+            // Open the Comment modal
+            $scope.openComment = function() {
+                $scope.commentform.show();
+            };
+
+            // Perform the Comment action when the user submits the Comment form
+            $scope.doComment = function() {
+                console.log('Doing comment', $scope.comment);
+            };
+
             $scope.dish = menuFactory.getDishes().get({id:parseInt($stateParams.id,10)})
             .$promise.then(
                             function(response){
