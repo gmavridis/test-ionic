@@ -156,8 +156,7 @@ angular.module('conFusion.controllers', [])
             $scope.dish = {};
             $scope.showDish = false;
             $scope.message = "Loading ...";
-            $scope.comment = {};
-
+            $scope.comment = {rating:5, comment:"", author:"", date:""};
             $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
                 scope: $scope
             }).then(function(popover) {
@@ -167,10 +166,6 @@ angular.module('conFusion.controllers', [])
             $scope.addFavorite = function () {
                 console.log("index is " + $scope.dish.id);
                 favoriteFactory.addToFavorites( $scope.dish.id );
-                $scope.popover.hide();
-            };
-
-            $scope.addComment = function() {
                 $scope.popover.hide();
             };
 
@@ -193,12 +188,19 @@ angular.module('conFusion.controllers', [])
 
             // Open the Comment modal
             $scope.openComment = function() {
+                $scope.popover.hide();
                 $scope.commentform.show();
             };
 
             // Perform the Comment action when the user submits the Comment form
             $scope.doComment = function() {
                 console.log('Doing comment', $scope.comment);
+                $scope.comment.date = new Date().toISOString();
+                $scope.dish.comments.push($scope.mycomment);
+                menuFactory.getDishes().update({id:$scope.dish.id},$scope.dish);
+                $scope.comment = {rating:5, comment:"", author:"", date:""};
+                $scope.commentform.hide();
+                $scope.commentform.$setPristine();
             };
 
             $scope.dish = menuFactory.getDishes().get({id:parseInt($stateParams.id,10)})
